@@ -1,0 +1,6 @@
+!images/empty.jpg
+!images/dlib_face_recognition_resnet_model_v1.dat
+!images/mmod_human_face_detector.dat
+!images/shape_predictor_5_face_landmarks.dat
+images
+.idea

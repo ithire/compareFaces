@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-func hello(w http.ResponseWriter, r *http.Request) {
+func faceCompare(w http.ResponseWriter, r *http.Request) {
 	jpeg := helpers.NewJpg("images/")
 
 	base64Face1 := r.FormValue("face1")
@@ -35,6 +35,6 @@ func hello(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	http.HandleFunc("/hello", hello)
+	http.HandleFunc("/face-compare", faceCompare)
 	http.ListenAndServe(":8099", nil)
 }
