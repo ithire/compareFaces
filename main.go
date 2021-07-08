@@ -10,23 +10,25 @@ import (
 func faceCompare(w http.ResponseWriter, r *http.Request) {
 	jpeg := helpers.NewJpg("images/")
 
-	face1 := jpeg.GetJpg(r.FormValue("face1"))
-	face2 := jpeg.GetJpg(r.FormValue("face2"))
+	face1, face1Reader := jpeg.GetJpg(r.FormValue("face1"))
+	face2, face2Reader := jpeg.GetJpg(r.FormValue("face2"))
 
-	image1Name := jpeg.IncrementImageName()
-	image2Name := jpeg.IncrementImageName()
+	image1Name, image1Type := jpeg.CreateImage(face1, face1Reader)
+	image2Name, image2Type := jpeg.CreateImage(face2, face2Reader)
 
-	jpeg.CreateJpg(image1Name, face1)
-	jpeg.CreateJpg(image2Name, face2)
-
-	var facePersons = face_persons.NewFacePerson("images", "empty.jpg", image1Name, image2Name)
-
-	w.Write([]byte(strconv.FormatBool(facePersons.Run())))
+	if image1Type == "png" {
+		image1Name = jpeg.PngToJpg(image1Name, jpeg.IncrementImageName())
+	}
+	if image2Type == "png" {
+		image2Name = jpeg.PngToJpg(image2Name, jpeg.IncrementImageName())
+	}
 
 	defer jpeg.DeleteJpg(image1Name)
 	defer jpeg.DeleteJpg(image2Name)
 
-	return
+	var facePersons = face_persons.NewFacePerson("images", "empty.jpg", image1Name, image2Name)
+
+	w.Write([]byte(strconv.FormatBool(facePersons.Run())))
 
 }
 
