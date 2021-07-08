@@ -3,8 +3,6 @@ package main
 import (
 	face_persons "compareFaces/face-persons"
 	"compareFaces/helpers"
-	"encoding/base64"
-	"math/rand"
 	"net/http"
 	"strconv"
 )
@@ -12,13 +10,11 @@ import (
 func faceCompare(w http.ResponseWriter, r *http.Request) {
 	jpeg := helpers.NewJpg("images/")
 
-	base64Face1 := r.FormValue("face1")
-	base64Face2 := r.FormValue("face2")
-	face1, _ := base64.StdEncoding.DecodeString(base64Face1)
-	face2, _ := base64.StdEncoding.DecodeString(base64Face2)
+	face1 := jpeg.GetJpg(r.FormValue("face1"))
+	face2 := jpeg.GetJpg(r.FormValue("face2"))
 
-	image1Name := strconv.Itoa(rand.Int()) + ".jpg"
-	image2Name := strconv.Itoa(rand.Int()) + ".jpg"
+	image1Name := jpeg.IncrementImageName()
+	image2Name := jpeg.IncrementImageName()
 
 	jpeg.CreateJpg(image1Name, face1)
 	jpeg.CreateJpg(image2Name, face2)
@@ -36,5 +32,5 @@ func faceCompare(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	http.HandleFunc("/face-compare", faceCompare)
-	http.ListenAndServe(":8099", nil)
+	http.ListenAndServe(":7001", nil)
 }

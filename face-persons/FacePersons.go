@@ -3,7 +3,6 @@ package face_persons
 import (
 	"fmt"
 	"github.com/Arturbox/go-face"
-	"log"
 	"path/filepath"
 )
 
@@ -35,9 +34,14 @@ func (f FacePerson) Run() bool {
 
 	//Recognizer Initialized
 
-	var faces = f.MergeFaces(f.Optimize(rec, f.defaultFace), f.Optimize(rec, f.face1))
+	optimizedFace1 := f.Optimize(rec, f.face1)
+	optimizedFace2 := f.Optimize(rec, f.face2)
 
-	var face2 = f.Optimize(rec, f.face2)
+	if optimizedFace1 == nil || optimizedFace2 == nil {
+		return false
+	}
+
+	var faces = f.MergeFaces(f.Optimize(rec, f.defaultFace), optimizedFace1)
 
 	var samples []face.Descriptor
 	var avengers []int32
@@ -49,7 +53,7 @@ func (f FacePerson) Run() bool {
 
 	rec.SetSamples(samples, avengers)
 
-	avengerID := rec.Classify(face2.Descriptor)
+	avengerID := rec.Classify(optimizedFace2.Descriptor)
 	fmt.Println(avengerID)
 	if avengerID < 1 {
 		//Can't classify
@@ -63,7 +67,8 @@ func (f FacePerson) Optimize(rec *face.Recognizer, face string) *face.Face {
 	image := filepath.Join(f.dataDir, face)
 	item, err := rec.RecognizeSingleFile(image)
 	if err != nil {
-		log.Fatalf("Can't recognize: %v", err)
+		fmt.Println("Can't recognize", err)
+		//log.Fatalf("Can't recognize: %v", err)
 	}
 
 	return item

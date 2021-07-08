@@ -3,8 +3,12 @@ package helpers
 import "C"
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
+	"math/rand"
+	"net/http"
 	"os"
+	"strconv"
 )
 
 type Jpg struct {
@@ -36,4 +40,19 @@ func (j Jpg) DeleteJpg(name string) {
 	if err != nil {
 		fmt.Println("don't delete")
 	}
+}
+
+func (j Jpg) GetJpg(url string) []byte {
+	res, err := http.Get(url)
+	if err != nil {
+		return nil
+	}
+	content, err := ioutil.ReadAll(res.Body)
+	res.Body.Close()
+
+	return content
+}
+
+func (j Jpg) IncrementImageName() string {
+	return strconv.Itoa(rand.Int()) + ".jpg"
 }
