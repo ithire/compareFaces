@@ -67,6 +67,7 @@ func (f FacePerson) Optimize(rec *face.Recognizer, face string) *face.Face {
 	image := filepath.Join(f.dataDir, face)
 	item, err := rec.RecognizeSingleFile(image)
 	if err != nil {
+		fmt.Println(err)
 		fmt.Println("Can't recognize", err)
 		//log.Fatalf("Can't recognize: %v", err)
 	}
