@@ -7,20 +7,16 @@ import (
 )
 
 type FacePerson struct {
-	dataDir     string
-	defaultFace string
-	face1       string
-	face2       string
-	//esim face.Recognizer
-
+	dataDir string
+	face1   string
+	face2   string
 }
 
-func NewFacePerson(dataDir string, face1 string, face2 string, face3 string) *FacePerson {
+func NewFacePerson(dataDir string, face2 string, face3 string) *FacePerson {
 	return &FacePerson{
-		dataDir:     dataDir,
-		defaultFace: face1,
-		face1:       face2,
-		face2:       face3,
+		dataDir: dataDir,
+		face1:   face2,
+		face2:   face3,
 	}
 }
 
@@ -41,7 +37,7 @@ func (f FacePerson) Run() bool {
 		return false
 	}
 
-	var faces = f.MergeFaces(f.Optimize(rec, f.defaultFace), optimizedFace1)
+	var faces = f.MergeFaces(optimizedFace1)
 
 	var samples []face.Descriptor
 	var avengers []int32
@@ -53,9 +49,9 @@ func (f FacePerson) Run() bool {
 
 	rec.SetSamples(samples, avengers)
 
-	avengerID := rec.Classify(optimizedFace2.Descriptor)
+	avengerID := rec.ClassifyThreshold(optimizedFace2.Descriptor, 0.6)
 	fmt.Println(avengerID)
-	if avengerID < 1 {
+	if avengerID < 0 {
 		//Can't classify
 		return false
 	}
@@ -67,7 +63,6 @@ func (f FacePerson) Optimize(rec *face.Recognizer, face string) *face.Face {
 	image := filepath.Join(f.dataDir, face)
 	item, err := rec.RecognizeSingleFile(image)
 	if err != nil {
-		fmt.Println(err)
 		fmt.Println("Can't recognize", err)
 		//log.Fatalf("Can't recognize: %v", err)
 	}
@@ -75,8 +70,7 @@ func (f FacePerson) Optimize(rec *face.Recognizer, face string) *face.Face {
 	return item
 }
 
-func (f FacePerson) MergeFaces(face1 *face.Face, face2 *face.Face) (faces []*face.Face) {
-	faces = append(faces, face1)
+func (f FacePerson) MergeFaces(face2 *face.Face) (faces []*face.Face) {
 	faces = append(faces, face2)
 
 	return faces
