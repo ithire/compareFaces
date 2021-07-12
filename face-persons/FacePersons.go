@@ -49,7 +49,7 @@ func (f FacePerson) Run() bool {
 
 	rec.SetSamples(samples, avengers)
 
-	avengerID := rec.ClassifyThreshold(optimizedFace2.Descriptor, 0.6)
+	avengerID := rec.ClassifyThreshold(optimizedFace2.Descriptor, 0.3)
 	fmt.Println(avengerID)
 	if avengerID < 0 {
 		//Can't classify
